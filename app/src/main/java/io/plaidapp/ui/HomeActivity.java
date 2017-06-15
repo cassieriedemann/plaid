@@ -76,6 +76,9 @@ import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import inkapplicaitons.android.logger.ConsoleLogger;
+import inkapplicaitons.android.logger.Logger;
+import inkapplications.guava.Stopwatch;
 import io.plaidapp.R;
 import io.plaidapp.data.DataManager;
 import io.plaidapp.data.PlaidItem;
@@ -125,6 +128,9 @@ public class HomeActivity extends Activity {
     private DesignerNewsPrefs designerNewsPrefs;
     private DribbblePrefs dribbblePrefs;
 
+    private Stopwatch stopwatch = Stopwatch.createUnstarted();
+    private Logger logger = new ConsoleLogger(0);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,20 +150,17 @@ public class HomeActivity extends Activity {
         dribbblePrefs = DribbblePrefs.get(this);
         designerNewsPrefs = DesignerNewsPrefs.get(this);
         filtersAdapter = new FilterAdapter(this, SourceManager.getSources(this),
-                new FilterAdapter.FilterAuthoriser() {
-            @Override
-            public void requestDribbbleAuthorisation(View sharedElement, Source forSource) {
-                Intent login = new Intent(HomeActivity.this, DribbbleLogin.class);
-                MorphTransform.addExtras(login,
-                        ContextCompat.getColor(HomeActivity.this, R.color.background_dark),
-                        sharedElement.getHeight() / 2);
-                ActivityOptions options =
-                        ActivityOptions.makeSceneTransitionAnimation(HomeActivity.this,
-                                sharedElement, getString(R.string.transition_dribbble_login));
-                startActivityForResult(login,
-                        getAuthSourceRequestCode(forSource), options.toBundle());
-            }
-        });
+                (sharedElement, forSource) -> {
+                    Intent login = new Intent(HomeActivity.this, DribbbleLogin.class);
+                    MorphTransform.addExtras(login,
+                            ContextCompat.getColor(HomeActivity.this, R.color.background_dark),
+                            sharedElement.getHeight() / 2);
+                    ActivityOptions options =
+                            ActivityOptions.makeSceneTransitionAnimation(HomeActivity.this,
+                                    sharedElement, getString(R.string.transition_dribbble_login));
+                    startActivityForResult(login,
+                            getAuthSourceRequestCode(forSource), options.toBundle());
+                });
         dataManager = new DataManager(this, filtersAdapter) {
             @Override
             public void onDataLoaded(List<? extends PlaidItem> data) {

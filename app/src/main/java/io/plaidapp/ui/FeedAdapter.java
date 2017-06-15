@@ -669,11 +669,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyItemRemoved(loadingPos);
     }
 
-    public static SharedElementCallback createSharedElementReenterCallback(
-            @NonNull Context context) {
+    public static SharedElementCallback createSharedElementReenterCallback(@NonNull Context context) {
         final String shotTransitionName = context.getString(R.string.transition_shot);
-        final String shotBackgroundTransitionName =
-                context.getString(R.string.transition_shot_background);
+        final String shotBackgroundTransitionName = context.getString(R.string.transition_shot_background);
         return new SharedElementCallback() {
 
             /**

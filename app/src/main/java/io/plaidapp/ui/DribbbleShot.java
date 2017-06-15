@@ -41,6 +41,7 @@ import android.text.format.DateUtils;
 import android.transition.AutoTransition;
 import android.transition.Transition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -68,6 +69,9 @@ import java.util.List;
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import inkapplicaitons.android.logger.ConsoleLogger;
+import inkapplicaitons.android.logger.Logger;
+import inkapplications.guava.Stopwatch;
 import io.plaidapp.R;
 import io.plaidapp.data.api.dribbble.DribbbleService;
 import io.plaidapp.data.api.dribbble.model.Comment;
@@ -127,6 +131,9 @@ public class DribbbleShot extends Activity {
     private View commentFooter;
     private ImageView userAvatar;
     private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
+
+    private Stopwatch stopwatch = Stopwatch.createUnstarted();
+    private Logger logger = new ConsoleLogger(0);
 
     Shot shot;
     int fabOffset;
@@ -1106,19 +1113,23 @@ public class DribbbleShot extends Activity {
 
         CommentAnimator() {
             super();
+            Log.d("CommentAnimator", "created");
         }
 
         void setAnimateMoves(boolean animateMoves) {
             this.animateMoves = animateMoves;
+            Log.d("CommentAnimator", "animateMoves " + animateMoves);
         }
 
         @Override
         public boolean animateMove(
                 RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
             if (!animateMoves) {
+                Log.d("CommentAnimator", "dispatchMoveFinished");
                 dispatchMoveFinished(holder);
                 return false;
             }
+            Log.d("CommentAnimator", "super.animateMove");
             return super.animateMove(holder, fromX, fromY, toX, toY);
         }
     }
